@@ -1,0 +1,29 @@
+{
+  "name": "plumber-s3",
+  "version": "0.2.0",
+  "description": "AWS S3 operations for Plumber pipelines",
+  "main": "index",
+  "dependencies": {
+    "plumber": "~0.2.4",
+    "aws-sdk": "~2.0.0",
+    "q": "~0.9.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/plumberjs/plumber-s3.git"
+  },
+  "keywords": [
+    "build",
+    "assets",
+    "pipeline",
+    "plumber",
+    "aws",
+    "s3",
+    "amazon"
+  ],
+  "author": "Sébastien Cevey <seb@cine7.net>",
+  "license": "GPL",
+  "bugs": {
+    "url": "https://github.com/plumberjs/plumber-s3/issues"
+  }
+}
