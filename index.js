@@ -5,9 +5,9 @@ var AWS = require('aws-sdk');
 var q = require('q');
 
 
-function createReport(resource) {
+function createReport(path) {
     return new Report({
-        resource: resource,
+        path: path,
         type: 'write'
     });
 }
@@ -19,7 +19,7 @@ function write(key, secret, bucket) {
     });
 
     var s3 = new AWS.S3();
-    var putObject = q.denodeify(s3.putObject);
+    var putObject = q.denodeify(s3.putObject.bind(s3));
 
     var mimes = {
         javascript: 'application/javascript',
@@ -35,7 +35,7 @@ function write(key, secret, bucket) {
             Bucket: bucket,
             Key: resource.path().absolute(),
             ContentType: mimes[resource.type()]
-        }).thenResolve(createReport(resource));
+        }).thenResolve(createReport(resource.path()));
     });
 };
 
