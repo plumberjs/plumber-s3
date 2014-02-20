@@ -3,7 +3,18 @@ var mapEachResource = require('plumber').mapEachResource;
 
 var AWS = require('aws-sdk');
 var q = require('q');
+var extend = require('extend');
 
+
+var mimes = {
+    javascript: 'application/javascript',
+    css:  'text/css',
+    json: 'application/json',
+    jpg:  'image/jpeg',
+    jpeg: 'image/jpeg',
+    // FIXME: no html type yet
+    html: 'text/html'
+};
 
 function createReport(path) {
     return new Report({
@@ -11,6 +22,8 @@ function createReport(path) {
         type: 'write'
     });
 }
+
+
 
 function write(key, secret, bucket) {
     AWS.config.update({
@@ -21,25 +34,47 @@ function write(key, secret, bucket) {
     var s3 = new AWS.S3();
     var putObject = q.denodeify(s3.putObject.bind(s3));
 
-    var mimes = {
-        javascript: 'application/javascript',
-        css: 'text/css',
-        json: 'application/json',
-        // FIXME: no html type yet
-        html: 'text/html'
+    var baseParams = {
+        Bucket: bucket
     };
 
     return mapEachResource(function(resource) {
-        return putObject({
+        var mimeType = mimes[resource.type()];
+        return putObject(extend({}, baseParams, {
             Body: resource.data(),
-            Bucket: bucket,
-            Key: resource.path().absolute(),
-            ContentType: mimes[resource.type()]
-        }).thenResolve(createReport(resource.path()));
+            Key:  resource.path().absolute()
+        }, mimeType && {ContentType: mimeType})).
+            thenResolve(createReport(resource.path()));
     });
 };
 
+// s3(key, secret).write('bucket')
 
-module.exports = {
-    write: write
+function writeOperation(key, secret) {
+
+    AWS.config.update({
+        accessKeyId: key,
+        secretAccessKey: secret
+    });
+
+    var s3 = new AWS.S3();
+    var putObject = q.denodeify(s3.putObject.bind(s3));
+
+
+    function writeOperation(bucket) {
+        return mapEachResource(function(resource) {
+            var mimeType = mimes[resource.type()];
+            return putObject(extend({
+                Body: resource.data(),
+                Key: resource.path().absolute()
+            }, mimeType && {ContentType: mimeType})).
+                thenResolve(createReport(resource.path()));
+        });
+    }
+
+    return {
+        write: writeOperation
+    };
 };
+
+module.exports = writeOperation;
