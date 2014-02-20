@@ -6,7 +6,8 @@
   "dependencies": {
     "plumber": "~0.2.4",
     "aws-sdk": "~2.0.0",
-    "q": "~0.9.7"
+    "q": "~0.9.7",
+    "extend": "~1.2.1"
   },
   "repository": {
     "type": "git",
