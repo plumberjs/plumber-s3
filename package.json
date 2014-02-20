@@ -1,6 +1,6 @@
 {
   "name": "plumber-s3",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "AWS S3 operations for Plumber pipelines",
   "main": "index",
   "dependencies": {
