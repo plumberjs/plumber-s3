@@ -24,40 +24,14 @@ function createReport(path) {
 }
 
 
-
-function write(key, secret, bucket) {
-    AWS.config.update({
-        accessKeyId: key,
-        secretAccessKey: secret
-    });
-
-    var s3 = new AWS.S3();
-    var putObject = q.denodeify(s3.putObject.bind(s3));
-
-    var baseParams = {
-        Bucket: bucket
-    };
-
-    return mapEachResource(function(resource) {
-        var mimeType = mimes[resource.type()];
-        return putObject(extend({}, baseParams, {
-            Body: resource.data(),
-            Key:  resource.path().absolute()
-        }, mimeType && {ContentType: mimeType})).
-            thenResolve(createReport(resource.path()));
-    });
-};
-
 // s3(key, secret).write('bucket')
 
 function writeOperation(key, secret) {
 
-    AWS.config.update({
+    var s3 = new AWS.S3({
         accessKeyId: key,
         secretAccessKey: secret
     });
-
-    var s3 = new AWS.S3();
     var putObject = q.denodeify(s3.putObject.bind(s3));
 
 
@@ -65,6 +39,7 @@ function writeOperation(key, secret) {
         return mapEachResource(function(resource) {
             var mimeType = mimes[resource.type()];
             return putObject(extend({
+                Bucket: bucket,
                 Body: resource.data(),
                 Key: resource.path().absolute()
             }, mimeType && {ContentType: mimeType})).
