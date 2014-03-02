@@ -23,12 +23,6 @@ function createReport(path) {
     });
 }
 
-function mapOperation(mapper) {
-    return operation(function(resources) {
-        resources.map(mapper);
-    });
-};
-
 function returnValue(value) {
     return function() {
         return value;
@@ -49,7 +43,7 @@ function writeOperation(key, secret) {
 
 
     function writeOperation(bucket) {
-        return mapOperation(function(resource) {
+        return operation.map(function(resource) {
             var mimeType = mimes[resource.type()];
             return putObject(extend({
                 Bucket: bucket,
