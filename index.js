@@ -43,14 +43,17 @@ function writeOperation(key, secret) {
 
 
     function writeOperation(bucket) {
-        return operation.map(function(resource) {
-            var mimeType = mimes[resource.type()];
-            return putObject(extend({
-                Bucket: bucket,
-                Body: resource.data(),
-                Key: resource.path().absolute()
-            }, mimeType && {ContentType: mimeType})).
-                map(returnValue(createReport(resource.path())));
+        return operation(function(resources) {
+            return resources.map(function(resource) {
+                var mimeType = mimes[resource.type()];
+                return putObject(extend({
+                    Bucket: bucket,
+                    Body: resource.data(),
+                    Key: resource.path().absolute()
+                }, mimeType && {ContentType: mimeType})).
+                    map(returnValue(createReport(resource.path())));
+            }).merge();
+            // TODO: or parallel to set a maximum concurrent uploads?
         });
     }
 
