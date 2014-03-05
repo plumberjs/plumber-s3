@@ -1,8 +1,8 @@
+var operation = require('plumber').operation;
 var Report = require('plumber').Report;
-var mapEachResource = require('plumber').mapEachResource;
 
+var highland = require('highland');
 var AWS = require('aws-sdk');
-var q = require('q');
 var extend = require('extend');
 
 
@@ -23,6 +23,12 @@ function createReport(path) {
     });
 }
 
+function returnValue(value) {
+    return function() {
+        return value;
+    };
+}
+
 
 // s3(key, secret).write('bucket')
 
@@ -32,18 +38,19 @@ function writeOperation(key, secret) {
         accessKeyId: key,
         secretAccessKey: secret
     });
-    var putObject = q.denodeify(s3.putObject.bind(s3));
+
+    var putObject = highland.wrapCallback(s3.putObject.bind(s3));
 
 
     function writeOperation(bucket) {
-        return mapEachResource(function(resource) {
+        return operation.parallelFlatMap(function(resource) {
             var mimeType = mimes[resource.type()];
             return putObject(extend({
                 Bucket: bucket,
                 Body: resource.data(),
                 Key: resource.path().absolute()
             }, mimeType && {ContentType: mimeType})).
-                thenResolve(createReport(resource.path()));
+                map(returnValue(createReport(resource.path())));
         });
     }
 
