@@ -4,7 +4,7 @@
   "description": "AWS S3 operations for Plumber pipelines",
   "main": "index",
   "dependencies": {
-    "plumber": "git://github.com/plumberjs/plumber.git#highland",
+    "plumber": "~0.3.0",
     "aws-sdk": "~2.0.0",
     "extend": "~1.2.1",
     "highland": "~1.16.2"
