@@ -43,13 +43,15 @@ function writeOperation(key, secret) {
 
     var putObject = highland.wrapCallback(s3.putObject.bind(s3));
 
+    // FIXME: not applying logic to append reference to source map in
+    // source data, because it lives in plumber-write...
 
     function writeOperation(bucket) {
         return operation.parallelFlatMap(function(resource) {
             var mimeType = mimes[resource.type()];
             return putObject(extend({
                 Bucket: bucket,
-                Body: resource.data(),
+                Body: resource.rawData(),
                 Key: resource.path().absolute()
             }, mimeType && {ContentType: mimeType})).
                 map(returnValue(createReport(resource.path())));
