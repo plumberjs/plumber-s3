@@ -12,6 +12,8 @@ var mimes = {
     json: 'application/json',
     jpg:  'image/jpeg',
     jpeg: 'image/jpeg',
+    png:  'image/png',
+    gif:  'image/gif',
     // FIXME: no html type yet
     html: 'text/html'
 };
