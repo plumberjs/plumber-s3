@@ -1,7 +1,7 @@
 var operation = require('plumber').operation;
 var Report = require('plumber').Report;
+var Rx = require('plumber').Rx;
 
-var highland = require('highland');
 var AWS = require('aws-sdk');
 var extend = require('extend');
 
@@ -41,7 +41,7 @@ function writeOperation(key, secret) {
         secretAccessKey: secret
     });
 
-    var putObject = highland.wrapCallback(s3.putObject.bind(s3));
+    var putObject = Rx.Node.fromNodeCallback(s3.putObject.bind(s3));
 
     // FIXME: not applying logic to append reference to source map in
     // source data, because it lives in plumber-write...
