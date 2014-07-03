@@ -4,10 +4,12 @@
   "description": "AWS S3 operations for Plumber pipelines",
   "main": "index",
   "dependencies": {
-    "plumber": "~0.3.0",
     "aws-sdk": "~2.0.0",
     "extend": "~1.2.1",
     "highland": "~1.16.2"
+  },
+  "peerDependencies": {
+    "plumber": "~0.4.0"
   },
   "repository": {
     "type": "git",
