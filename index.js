@@ -34,11 +34,12 @@ function returnValue(value) {
 
 // s3(key, secret).write('bucket')
 
-function writeOperation(key, secret) {
+function writeOperation(key, secret, region) {
 
     var s3 = new AWS.S3({
         accessKeyId: key,
-        secretAccessKey: secret
+        secretAccessKey: secret,
+        region: region
     });
 
     var putObject = Rx.Node.fromNodeCallback(s3.putObject.bind(s3));
